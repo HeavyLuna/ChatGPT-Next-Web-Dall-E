@@ -145,6 +145,62 @@ export function readFromFile() {
   });
 }
 
+export function file2Base64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      // reader.result 包含转换为base64的文件内容
+      resolve(reader.result as string);
+    };
+    reader.onerror = (error) => {
+      reject(error);
+    };
+    // 启动文件读取过程
+    reader.readAsDataURL(file);
+  });
+}
+
+export function base64ToFile(base64: any, filename = "image.png") {
+  // Extract MIME type from the base64 data
+  const match = base64.match(/^data:(.*?);base64,/);
+  if (!match) {
+    throw new Error("Invalid base64 data");
+  }
+  const mimeType = match[1];
+
+  // Remove URL encoding from the base64 data
+  const base64WithoutPrefix = base64.split(";base64,").pop();
+
+  // Convert base64 to a Uint8Array
+  const byteCharacters = atob(base64WithoutPrefix);
+  const byteNumbers = new Array(byteCharacters.length);
+  for (let i = 0; i < byteCharacters.length; i++) {
+    byteNumbers[i] = byteCharacters.charCodeAt(i);
+  }
+  const byteArray = new Uint8Array(byteNumbers);
+
+  // Create a Blob from the Uint8Array
+  const blob = new Blob([byteArray], { type: mimeType });
+
+  // Create and return a File object from the Blob
+  return new File([blob], filename, { type: mimeType });
+}
+
+export function createObjectURL(blob: Blob) {
+  return (window.URL || window.webkitURL).createObjectURL(blob);
+}
+
+export function getBlobUrl2File(blobUrl: string, filename: string = "image") {
+  return new Promise<File>((resolve, reject) => {
+    fetch(blobUrl)
+      .then((res) => res.blob())
+      .then((blob) => {
+        resolve(new File([blob], filename, { type: blob.type }));
+      })
+      .catch(reject);
+  });
+}
+
 export function isIOS() {
   const userAgent = navigator.userAgent.toLowerCase();
   return /iphone|ipad|ipod/.test(userAgent);
@@ -304,4 +360,28 @@ export function isVisionModel(model: string) {
   return (
     visionKeywords.some((keyword) => model.includes(keyword)) || isGpt4Turbo
   );
+}
+
+export function isDalleModel(model: string) {
+  return model.startsWith("dall-e");
+}
+
+export function isDalle2Model(model: string) {
+  return model.startsWith("dall-e-2");
+}
+
+export function isDalle3Model(model: string) {
+  return model.startsWith("dall-e-3");
+}
+
+export function isNotDalle2DefaultMode(model: string, mode: string) {
+  return isDalle2Model(model) && mode !== "Default";
+}
+
+export function isDalle2VariationMode(model: string, mode: string) {
+  return isDalle2Model(model) && mode === "CreateVariation";
+}
+
+export function isDalle2EditMode(model: string, mode: string) {
+  return isDalle2Model(model) && mode === "Edit";
 }

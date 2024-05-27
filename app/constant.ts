@@ -61,7 +61,8 @@ export const UNFINISHED_INPUT = (id: string) => "unfinished-input-" + id;
 
 export const STORAGE_KEY = "chatgpt-next-web";
 
-export const REQUEST_TIMEOUT_MS = 60000;
+// export const REQUEST_TIMEOUT_MS = 60000;
+export const REQUEST_TIMEOUT_MS = 180000;
 
 export const EXPORT_MESSAGE_CLASS_NAME = "export-markdown";
 
@@ -87,6 +88,9 @@ export const Anthropic = {
 
 export const OpenaiPath = {
   ChatPath: "v1/chat/completions",
+  createImgPath: "v1/images/generations",
+  createEditPath: "v1/images/edits",
+  createVariationionsPath: "v1/images/variations",
   UsagePath: "dashboard/billing/usage",
   SubsPath: "dashboard/billing/subscription",
   ListModelPath: "v1/models",
@@ -149,7 +153,9 @@ const openaiModels = [
   "gpt-4o",
   "gpt-4o-2024-05-13",
   "gpt-4-vision-preview",
-  "gpt-4-turbo-2024-04-09"
+  "gpt-4-turbo-2024-04-09",
+  "dall-e-2",
+  "dall-e-3",
 ];
 
 const googleModels = [

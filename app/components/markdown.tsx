@@ -162,6 +162,7 @@ function _MarkDownContent(props: { content: string }) {
           return <a {...aProps} target={target} />;
         },
       }}
+      transformLinkUri={(uri) => uri}
     >
       {escapedContent}
     </ReactMarkdown>
